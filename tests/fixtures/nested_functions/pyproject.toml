@@ -1,0 +1,4 @@
+[project]
+name = "pyscope-fixture-nested_functions"
+version = "0.1.0"
+description = "PyScope test fixture: nested_functions"

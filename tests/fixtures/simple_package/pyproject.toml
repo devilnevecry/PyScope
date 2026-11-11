@@ -1,0 +1,4 @@
+[project]
+name = "pyscope-fixture-simple_package"
+version = "0.1.0"
+description = "PyScope test fixture: simple_package"

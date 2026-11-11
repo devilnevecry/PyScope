@@ -1,0 +1,4 @@
+[project]
+name = "pyscope-fixture-syntax_errors"
+version = "0.1.0"
+description = "PyScope test fixture: syntax_errors"

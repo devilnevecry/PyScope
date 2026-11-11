@@ -1,0 +1,4 @@
+[project]
+name = "pyscope-fixture-circular_imports"
+version = "0.1.0"
+description = "PyScope test fixture: circular_imports"

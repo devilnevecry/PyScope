@@ -1,0 +1,4 @@
+[project]
+name = "pyscope-fixture-many_modules"
+version = "0.1.0"
+description = "PyScope test fixture: many_modules"

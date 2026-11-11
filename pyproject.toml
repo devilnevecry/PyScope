@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyscope"
+version = "0.1.0"
+description = "PyScope — Python Codebase Explorer: static analysis and architecture reports."
+readme = "README.en.md"
+requires-python = ">=3.11"
+authors = [{ name = "devilnevecry" }]
+license = { text = "MIT" }
+keywords = ["static-analysis", "python", "architecture", "cli", "dependency-graph"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Documentation",
+]
+
+dependencies = [
+    "typer>=0.9,<1.0",
+    "rich>=13,<16",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "ruff>=0.17",
+]
+
+[project.scripts]
+pyscope = "pyscope.cli:app"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["pyscope", "tests"]
+exclude = ["tests/fixtures", ".git", ".venv", "venv", "__pycache__", "build", "dist", ".ruff_cache", ".mypy_cache", ".pytest_cache", "node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "C4", "RUF"]
+ignore = ["E501", "B008", "RUF001"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pyscope", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-q"
