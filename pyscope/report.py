@@ -97,6 +97,18 @@ REPORT_TRANSLATIONS: dict[str, dict[str, str]] = {
         "report.nav.graph": "Граф",
         "report.nav.insights": "Рекомендации",
         "report.nav.inventory": "Инвентаризация",
+        "report.packages.files": "Файлов",
+        "report.packages.lines": "Строк",
+        "report.packages.classes": "Классов",
+        "report.packages.functions": "Функций",
+        "report.inventory.type": "Тип",
+        "report.inventory.name": "Имя",
+        "report.inventory.line": "Строка",
+        "report.largest.classes": "Классов",
+        "report.largest.functions": "Функций",
+        "report.files.lines": "Строк",
+        "report.files.code": "Кода",
+        "report.files.error": "Ошибка",
     },
     "en": {
         "report.title": "PyScope — Code Architecture Report",
@@ -181,6 +193,18 @@ REPORT_TRANSLATIONS: dict[str, dict[str, str]] = {
         "report.nav.graph": "Graph",
         "report.nav.insights": "Insights",
         "report.nav.inventory": "Inventory",
+        "report.packages.files": "Files",
+        "report.packages.lines": "Lines",
+        "report.packages.classes": "Classes",
+        "report.packages.functions": "Functions",
+        "report.inventory.type": "Type",
+        "report.inventory.name": "Name",
+        "report.inventory.line": "Line",
+        "report.largest.classes": "Classes",
+        "report.largest.functions": "Functions",
+        "report.files.lines": "Lines",
+        "report.files.code": "Code",
+        "report.files.error": "Error",
     },
 }
 
@@ -302,10 +326,15 @@ code{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fon
 .smallnote{ color:var(--muted); font-size:0.8rem; }
 """
 
-JS = """
+JS = r"""
 const DATA = JSON.parse(document.getElementById('pyscope-data').textContent);
 const CFG = JSON.parse(document.getElementById('pyscope-config').textContent);
-const LANG = CFG.language || 'ru';
+const LANG = (localStorage.getItem('pyscope-lang') || CFG.language || 'ru');
+const savedTheme = localStorage.getItem('pyscope-theme');
+if (savedTheme) { 
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (document.body) document.body.setAttribute('data-theme', savedTheme);
+}
 const TR = __TRANSLATIONS__;
 
 function t(key, args){ let m = (TR[LANG] && TR[LANG][key]) ? TR[LANG][key] : key; if(args){ try{ Object.keys(args).forEach(k=>{ m=m.replace(new RegExp('{'+k+'}','g'), args[k]); }); }catch(e){} } return m; }
@@ -319,10 +348,10 @@ function renderText(){ $$('[data-i18n]').forEach(el=>{ const k=el.getAttribute('
 function download(name, text, type){ const blob=new Blob([text],{type:type}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
 
 function renderOverview(){ const s = DATA.summary || {}; const container=$('#overview-cards'); container.innerHTML='';
-  const cards=[['overview.total_files',s.files||0,''],['overview.total_modules',s.modules||0,''],
-    ['overview.total_lines',s.lines||0,''],['overview.classes',s.classes||0,''],
-    ['overview.functions',s.functions||0,''],['overview.cycles',s.cycles||0,'danger'],
-    ['overview.findings',s.findings||0,'']];
+  const cards=[['report.overview.total_files',s.files||0,''],['report.overview.total_modules',s.modules||0,''],
+    ['report.overview.total_lines',s.lines||0,''],['report.overview.classes',s.classes||0,''],
+    ['report.overview.functions',s.functions||0,''],['report.overview.cycles',s.cycles||0,'danger'],
+    ['report.overview.findings',s.findings||0,'']];
   cards.forEach(([key,val,cls])=>{ const c=document.createElement('div'); c.className='card'+(cls?' '+cls:'');
     c.innerHTML='<div class="value">'+val+'</div><div class="label" data-i18n="'+key+'">'+t(key)+'</div>';
     container.appendChild(c); });
@@ -532,7 +561,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 """
 
-TEMPLATE = """<!DOCTYPE html>
+TEMPLATE = r"""<!DOCTYPE html>
 <html lang="{lang}" dir="{dir}">
 <head>
 <meta charset="utf-8">
@@ -631,8 +660,8 @@ TEMPLATE = """<!DOCTYPE html>
   <div id="module-details-body"></div>
 </div>
 
-<script id="pyscope-config">{"language":"{lang}","theme":"{theme}"}</script>
-<script id="pyscope-data">{data}</script>
+<script id="pyscope-config" type="application/json">{"language":"{lang}","theme":"{theme}"}</script>
+<script id="pyscope-data" type="application/json">{data}</script>
 <script>const __TRANSLATIONS__ = {tr};</script>
 <script>{js}</script>
 <script>

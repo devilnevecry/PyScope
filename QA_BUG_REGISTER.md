@@ -2,7 +2,7 @@
 
 Format: ID | Severity | Description | Status | Fix | Regression Test
 
-## Fixed
+## Fixed — Phase 2
 
 | ID | Severity | Description | Fix | Regression Test |
 |----|----------|-------------|-----|-----------------|
@@ -13,11 +13,16 @@ Format: ID | Severity | Description | Status | Fix | Regression Test
 | QA-05 | MEDIUM | Import classification was only set on graph edges, not on per-file import objects → JSON/file-level classification stayed "unresolved". | analysis.py now classifies/resolves every file's imports after analysis. | tests/test_engine.py::test_dependency_classification |
 | QA-06 | MEDIUM | Cyclomatic complexity counter skipped the top-level function node's own decisions. | ast_analysis.py `_ComplexityCounter.visit_FunctionDef` now measures the function's own decisions. | tests/test_engine.py::test_complexity_metrics |
 
-## Notes
+## Fixed — Phase 3
 
-- Symlink-outside-root test is SKIPPED on this Windows host (no symlink creation privilege); unit-test logic in discovery.py covers it and is exercised where privileges allow.
-- Windows cp1252 console cannot decode/display Cyrillic CLI output when captured via subprocess `text=True`; direct execution in a UTF-8 terminal works. Not a PyScope defect; test harness uses `encoding="utf-8", errors="replace"`.
-- Cannot create files with `<`/`>` in names on Windows; HTML-injection via filename verified through unit test (test_report.py::test_html_escaping) and via valid special-char filename (`weird&name.py`).
+| ID | Severity | Description | Fix | Regression Test |
+|----|----------|-------------|-----|-----------------|
+| QA-07 | HIGH | HTML report stat cards showed raw translation keys (e.g. "overview.total_files") instead of labels ("Всего файлов"). | report.py `renderOverview` now uses `report.overview.*` prefixed keys matching translations. | tests/test_report.py::test_html_report_contains_sections |
+| QA-08 | HIGH | HTML report table headers showed raw translation keys (e.g. "report.packages.files", "report.inventory.type", "report.largest.classes"). | report.py: added missing translation keys to both `ru` and `en` sections of `REPORT_TRANSLATIONS`. | tests/test_report.py::test_html_report_contains_sections |
+| QA-09 | HIGH | `escJs()` regex was broken by Python string escaping in non-raw triple-quoted string → `/\\/g` became `/\g` (invalid regex), causing JS parse error. | report.py: `JS` and `TEMPLATE` strings changed to raw strings (`r"""..."""`). | tests/test_report.py::test_html_report_self_contained (no JS errors) |
+| QA-10 | MEDIUM | `<script id="pyscope-config">` and `<script id="pyscope-data">` contained JSON but lacked `type="application/json"`, causing browsers to parse them as JS ("Unexpected token ':'" page errors). | report.py: added `type="application/json"` to both script tags. | tests/test_report.py::test_html_report_self_contained (no page errors) |
+| QA-11 | MEDIUM | Language/theme selection did not persist across page reloads: `setLang()`/`setTheme()` saved to localStorage but page load read only from embedded config. | report.py: `LANG` now reads `localStorage.getItem('pyscope-lang')` first; theme reads `localStorage.getItem('pyscope-theme')` and applies to both `<html>` and `<body>`. | Manual Playwright test (EN/RU switch, dark/light switch, reload persistence) |
+| QA-12 | LOW | Symlink creation not possible on this Windows host (missing `SeCreateSymbolicLinkPrivilege`). Symlink safety test skipped. | Documented limitation; symlink safety logic in `discovery.py` reviewed and verified correct. | N/A (environment limitation) |
 
 ## Closed (verified)
 
@@ -27,7 +32,7 @@ Format: ID | Severity | Description | Status | Fix | Regression Test
 - Invalid TOML config rejected with clear error.
 - Config thresholds (complexity) affect findings.
 - Code execution never occurs (marker-file side-effect test).
-- Symlink outside root not analyzed.
+- Symlink outside root not analyzed (code reviewed; test skipped on this host).
 - Report writing inside project refused.
 - Invalid path / non-directory path rejected (exit 1).
 - --fail-on-cycles exits 2 on cyclic project, 0 on acyclic.
