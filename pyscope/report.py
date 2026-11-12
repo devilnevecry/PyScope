@@ -96,6 +96,7 @@ REPORT_TRANSLATIONS: dict[str, dict[str, str]] = {
         "report.nav.files": "Файлы",
         "report.nav.graph": "Граф",
         "report.nav.insights": "Рекомендации",
+        "report.nav.inventory": "Инвентаризация",
     },
     "en": {
         "report.title": "PyScope — Code Architecture Report",
@@ -179,6 +180,7 @@ REPORT_TRANSLATIONS: dict[str, dict[str, str]] = {
         "report.nav.files": "Files",
         "report.nav.graph": "Graph",
         "report.nav.insights": "Insights",
+        "report.nav.inventory": "Inventory",
     },
 }
 
@@ -518,7 +520,7 @@ files.forEach(f=>{
 }
 
 function showTab(id){ $$('.tabpanel').forEach(el=>el.classList.remove('active')); $$('.tabs button').forEach(el=>el.classList.remove('active'));
-  $( '#'+id ).classList.add('active'); event.target.classList.add('active');
+  $( '#tab-'+id ).classList.add('active'); event.target.classList.add('active');
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
@@ -570,6 +572,7 @@ TEMPLATE = """<!DOCTYPE html>
     <button data-i18n="report.nav.files" onclick="showTab('files')">Файлы</button>
     <button data-i18n="report.nav.graph" onclick="showTab('graph')">Граф</button>
     <button data-i18n="report.nav.insights" onclick="showTab('insights')">Рекомендации</button>
+    <button data-i18n="report.nav.inventory" onclick="showTab('inventory')">Инвентаризация</button>
   </div>
 
   <div id="tab-overview" class="tabpanel active">
@@ -617,6 +620,11 @@ TEMPLATE = """<!DOCTYPE html>
       <tr><th data-i18n="report.table.module">Модуль</th><th data-i18n="report.metric.lines">Строк</th><th data-i18n="report.files.code">Кода</th><th data-i18n="report.largest.classes">Классов</th><th data-i18n="report.largest.functions">Функций</th></tr>
       <tbody id="largest-body"></tbody>
     </table>
+  </div>
+
+  <div id="tab-inventory" class="tabpanel">
+    <h2 data-i18n="report.inventory">Инвентаризация функций и классов</h2>
+    <div id="inventory-body"></div>
   </div>
 
   <h2 data-i18n="report.module_details">Подробности модуля</h2>

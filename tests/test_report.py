@@ -49,7 +49,7 @@ def test_html_escaping(tmp_path):
     res = AnalysisResult(project_root=str(tmp_path), files=[fa])
     html_text = generate_report(res, language="ru")
     # The embedded JSON must not contain a closing script tag (XSS protection).
-    head, _, data_part = html_text.partition('<script id="pyscope-data">')
+    _head, _, data_part = html_text.partition('<script id="pyscope-data">')
     data_part, _, _ = data_part.partition("</script>")
     assert "</script>" not in data_part
     # The client-side esc function is present to render paths safely.
@@ -73,3 +73,26 @@ def test_html_report_contains_sections(circular_imports):
         "Подробности модуля",
     ]:
         assert section in html_text, section
+
+
+def test_html_report_has_inventory_section(circular_imports):
+    """Regression: inventory body element must exist so renderInventory() does not crash."""
+    result = _engine().analyze(circular_imports)
+    html_text = generate_report(result, language="ru")
+    assert 'id="inventory-body"' in html_text
+    assert 'id="tab-inventory"' in html_text
+    assert "Инвентаризация функций и классов" in html_text
+
+
+def test_html_report_tab_switching_wiring(circular_imports):
+    """Regression: showTab() must reference tab- prefixed panel ids, not bare ids."""
+    result = _engine().analyze(circular_imports)
+    html_text = generate_report(result, language="ru")
+    # panels are id="tab-<name>"
+    for panel in ["overview", "files", "graph", "insights", "inventory"]:
+        assert f'id="tab-{panel}"' in html_text, panel
+    # showTab constructs '#tab-' + id
+    assert "'#tab-'+id" in html_text
+    # each tab button calls showTab with the matching name
+    for name in ["overview", "files", "graph", "insights", "inventory"]:
+        assert f"showTab('{name}')" in html_text, name

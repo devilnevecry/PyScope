@@ -34,6 +34,11 @@ def to_json_dict(result: AnalysisResult) -> dict[str, Any]:
                 "encoding": f.encoding,
                 "syntax_error": f.syntax_error,
                 "docstring": f.docstring,
+                "decorators": f.decorators,
+                "global_declarations": f.global_declarations,
+                "exception_handlers": f.exception_handlers,
+                "async_definitions": f.async_definitions,
+                "nested_definitions": f.nested_definitions,
                 "imports": [
                     {
                         "module": imp.module,
@@ -55,6 +60,7 @@ def to_json_dict(result: AnalysisResult) -> dict[str, Any]:
                         "public_method_count": c.public_method_count,
                         "decorators": c.decorators,
                         "has_docstring": c.has_docstring,
+                        "is_nested": c.is_nested,
                         "methods": [
                             {
                                 "name": m.name,
@@ -63,11 +69,16 @@ def to_json_dict(result: AnalysisResult) -> dict[str, Any]:
                                 "is_async": m.is_async,
                                 "is_method": m.is_method,
                                 "args_count": m.args_count,
+                                "branch_count": m.branch_count,
                                 "complexity": m.complexity,
                                 "nesting_depth": m.nesting_depth,
                                 "return_count": m.return_count,
+                                "exception_handler_count": m.exception_handler_count,
                                 "has_docstring": m.has_docstring,
                                 "annotation_coverage": m.annotation_coverage,
+                                "decorators": m.decorators,
+                                "code_lines": m.code_lines,
+                                "is_nested": m.is_nested,
                             }
                             for m in c.methods
                         ],
@@ -82,11 +93,16 @@ def to_json_dict(result: AnalysisResult) -> dict[str, Any]:
                         "is_async": fn.is_async,
                         "is_method": fn.is_method,
                         "args_count": fn.args_count,
+                        "branch_count": fn.branch_count,
                         "complexity": fn.complexity,
                         "nesting_depth": fn.nesting_depth,
                         "return_count": fn.return_count,
+                        "exception_handler_count": fn.exception_handler_count,
                         "has_docstring": fn.has_docstring,
                         "annotation_coverage": fn.annotation_coverage,
+                        "decorators": fn.decorators,
+                        "code_lines": fn.code_lines,
+                        "is_nested": fn.is_nested,
                     }
                     for fn in f.functions
                 ],
