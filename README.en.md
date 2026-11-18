@@ -20,11 +20,18 @@ PyScope is a local-first static analysis tool for Python repositories that gener
 ## Quick start
 
 ```bash
-pip install pyscope
+git clone https://github.com/devilnevecry/PyScope.git
+cd PyScope
+python -m pip install -e .
 pyscope analyze /path/to/project --output report.html --open
 pyscope analyze /path/to/project --format json --output analysis.json
 pyscope version
 ```
+
+> **PyPI name collision:** the `pyscope` distribution on PyPI belongs to an
+> unrelated astronomy/telescope project. This tool is not published on PyPI, so
+> `pip install pyscope` installs the wrong package — use `pip install -e .` from
+> a clone of this repository as shown above.
 
 ### CLI commands
 

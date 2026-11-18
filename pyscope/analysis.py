@@ -62,7 +62,17 @@ class AnalysisEngine:
             except Exception:
                 toml_config = None
         if toml_config is not None:
-            self.config = toml_config
+            overrides = getattr(self.config, "cli_overrides", frozenset())
+            # An explicit --config wins over a pyscope.toml found in the tree.
+            if "config" not in overrides:
+                # Start from the project's TOML values, then restore every field
+                # that was set explicitly on the command line so CLI args take
+                # precedence instead of being silently discarded.
+                for name in overrides:
+                    if hasattr(toml_config, name) and hasattr(self.config, name):
+                        setattr(toml_config, name, getattr(self.config, name))
+                toml_config.cli_overrides = frozenset(overrides)
+                self.config = toml_config
 
         # Analyze each file.
         internal_modules: set[str] = set()

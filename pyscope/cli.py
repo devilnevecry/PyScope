@@ -54,8 +54,32 @@ def _resolve_language(value: str | None, config: Config) -> str:
     return config.report_language or DEFAULT_LANGUAGE
 
 
+# CLI option name -> Config attribute it overrides.  Tracked so a discovered
+# pyscope.toml cannot silently overwrite an explicitly supplied option.
+_CLI_OVERRIDE_FIELDS = {
+    "exclude": "exclude_patterns",
+    "max_files": "max_files",
+    "theme": "report_theme",
+}
+
+
+def _cli_overrides(ctx: typer.Context) -> frozenset[str]:
+    """Return Config field names explicitly provided on the command line."""
+    overrides = set()
+    for option, field_name in _CLI_OVERRIDE_FIELDS.items():
+        source = ctx.get_parameter_source(option)
+        if getattr(source, "name", None) == "COMMANDLINE":
+            overrides.add(field_name)
+    # "config" is a sentinel: an explicit --config must not be replaced by a
+    # pyscope.toml discovered inside the analyzed project.
+    if getattr(ctx.get_parameter_source("config"), "name", None) == "COMMANDLINE":
+        overrides.add("config")
+    return frozenset(overrides)
+
+
 @app.command()
 def analyze(
+    ctx: typer.Context,
     path: str = typer.Argument(..., help="Path to the Python project to analyze."),
     output: str | None = typer.Option(
         None, "--output", "-o", help="Output file path (default: pyscope-report.html in CWD)."
@@ -97,6 +121,7 @@ def analyze(
         cfg.max_files = max_files
         if theme:
             cfg.report_theme = theme
+        cfg.cli_overrides = _cli_overrides(ctx)
     except ConfigurationError as exc:
         console.print(f"[red]{translate('cli.error', message=str(exc))}[/red]")
         raise typer.Exit(code=1) from None

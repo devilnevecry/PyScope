@@ -55,6 +55,10 @@ class Config:
     graph_package_aggregation: bool = False
     fail_on_cycles: bool = False
     fail_on_syntax_errors: bool = False
+    # Names of Config fields set explicitly on the command line.  Kept out of
+    # serialization and equality; used by AnalysisEngine so that a discovered
+    # pyscope.toml cannot silently overwrite an explicit CLI option.
+    cli_overrides: frozenset[str] = field(default_factory=frozenset, repr=False, compare=False)
 
     @classmethod
     def load(cls, path: str | None = None) -> "Config":

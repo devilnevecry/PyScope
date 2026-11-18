@@ -20,11 +20,18 @@ PyScope — это локальный инструмент статическо�
 ## Быстрый старт
 
 ```bash
-pip install pyscope
+git clone https://github.com/devilnevecry/PyScope.git
+cd PyScope
+python -m pip install -e .
 pyscope analyze /путь/к/проекту --output report.html --open
 pyscope analyze /путь/к/проекту --format json --output analysis.json
 pyscope version
 ```
+
+> **Конфликт имени в PyPI:** пакет `pyscope` на PyPI принадлежит стороннему
+> астрономическому проекту и не имеет отношения к этому инструменту. PyScope не
+> опубликован на PyPI, поэтому `pip install pyscope` установит другой пакет —
+> используйте `pip install -e .` из клона этого репозитория, как показано выше.
 
 ### Команды CLI
 

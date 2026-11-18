@@ -17,12 +17,26 @@ PyScope — Phase 3 Final Interactive QA and Release Verification
 
 | Test | Result |
 |------|--------|
-| pytest (51 tests) | 50 passed, 1 skipped |
+| pytest (47 collected) | 46 passed, 1 skipped |
 | ruff lint | All checks passed |
 | ruff format --check | 19 files already formatted |
-| Coverage | 82% overall |
+| Coverage | 84% overall on this branch (1049 stmts, 165 miss) |
 
 The 1 skipped test is the symlink-outside-root test, which cannot run on this Windows host because the account lacks `SeCreateSymbolicLinkPrivilege` (symlink creation is blocked by Windows security). The symlink safety logic in `discovery.py` has been reviewed and verified correct by code inspection.
+
+> **Factual update — 2026-11-18, `portfolio-polish` branch.** The figures in the
+> table above were re-measured against the current tree; the rest of this file
+> preserves the original Phase-3 snapshot (including its local path, commit
+> reference and per-module coverage rows). The earlier "51 tests / 50 passed"
+> figure does **not** match this repository's HEAD and appears to come from a
+> different local state. Current HEAD collects **47 tests: 46 passed, 1 skipped**
+> (`python -m pytest tests/ -ra`; the skip is the same symlink-privilege
+> limitation described above). The extra passing test compared with the pushed
+> `main` snapshot (45 passed, 1 skipped) is
+> `test_cli_options_override_project_toml`, added alongside the fix that stops
+> a discovered `pyscope.toml` from silently overwriting explicit CLI options.
+> Re-measured coverage is 84% (up from the snapshot's 82%) because that fix and
+> its test add and exercise new lines.
 
 Coverage by module (files below 100% are mostly error-handling paths exercised only via subprocess):
 
@@ -166,7 +180,7 @@ All 5 Phase 3 bugs are fixed, with the HTML/JS fixes covered by existing report 
 
 | Check | Result |
 |-------|--------|
-| Clean venv install (`pip install pyscope[dev]`) | PASS |
+| Clean venv install (`pip install -e ".[dev]"`) | PASS |
 | `pyscope --help` works | PASS |
 | `pyscope version` works | PASS |
 | HTML export | PASS |

@@ -121,3 +121,30 @@ def test_cli_refuses_output_inside_project(circular_imports, tmp_path):
         app, ["analyze", str(circular_imports), "--output", str(inside), "--format", "html"]
     )
     assert result.exit_code == 1
+
+
+def test_cli_options_override_project_toml(tmp_path):
+    """An explicit CLI option wins over a discovered pyscope.toml (QA regression)."""
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / "app.py").write_text("x = 1\n", encoding="utf-8")
+    (project / "pyscope.toml").write_text('report_theme = "dark"\n', encoding="utf-8")
+    out = tmp_path / "report.html"
+
+    result = runner.invoke(
+        app,
+        [
+            "analyze",
+            str(project),
+            "--output",
+            str(out),
+            "--format",
+            "html",
+            "--theme",
+            "light",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    text = out.read_text(encoding="utf-8")
+    assert '<body data-theme="light">' in text
+    assert '"theme":"light"' in text
